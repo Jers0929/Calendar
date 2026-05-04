@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Calendar</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+        color: #333;
+    }
+
+    h1 {
+        font-size: 48px;
+        color: white;
+        margin-bottom: 25px;
+    }
+
+    .calendar-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 35px;
+    }
+
+    .month {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .month:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+    }
+
+    .month h2 {
+        font-size: 20px;
+        margin: 10px 0;
+        color: #1e3c72;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        font-size: 13px;
+        color: #555;
+    }
+
+    td {
+        height: 35px;
+        font-size: 14px;
+        border-radius: 6px;
+        transition: 0.2s;
+        position: relative;
+    }
+
+    td:hover {
+        background-color: #d0e2ff;
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+
+   
+    .holiday {
+        position: relative;
+        font-weight: bold;
+    }
+
+    
+    .holiday::after {
+        content: "";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #e74c3c;
+    }
+
+    .special::after {
+        background: orange;
+    }
+
+    
+    .holiday::before {
+        content: attr(data-title);
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 11px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+    }
+
+    .holiday:hover::before {
+        opacity: 1;
+    }
+
+
+    @media (min-width: 1100px) {
+        .month {
+            flex: 1 1 calc(25% - 25px);
+            max-width: calc(25% - 25px);
+        }
+    }
+
+    @media (max-width: 1099px) {
+        .month {
+            flex: 1 1 calc(50% - 25px);
+            max-width: calc(50% - 25px);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .month {
+            flex: 1 1 100%;
+            max-width: 100%;
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+<h1>2026</h1>
+
+<div class="calendar-container" id="calendar"></div>
+
+<script>
+
+const months = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+];
+
+const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+
+const holidays = {
+    "1-1": "New Year’s Day",
+
+    "2-17": "Chinese New Year",
+    "2-25": "EDSA People Power Anniversary (Special Working)",
+
+    "4-2": "Maundy Thursday",
+    "4-3": "Good Friday",
+    "4-4": "Black Saturday",
+    "4-9": "Araw ng Kagitingan",
+
+    "5-1": "Labor Day",
+
+    "6-12": "Independence Day",
+
+    "8-21": "Ninoy Aquino Day",
+    "8-31": "National Heroes Day",
+
+    "11-1": "All Saints’ Day",
+    "11-2": "All Souls’ Day",
+    "11-30": "Bonifacio Day",
+
+    "12-8": "Immaculate Conception",
+    "12-24": "Christmas Eve",
+    "12-25": "Christmas Day",
+    "12-30": "Rizal Day",
+    "12-31": "New Year’s Eve"
+};
+
+
+function generateCalendar(year) {
+    const container = document.getElementById("calendar");
+
+    months.forEach((month, index) => {
+        const firstDay = new Date(year, index, 1).getDay();
+        const lastDate = new Date(year, index + 1, 0).getDate();
+
+        let monthDiv = document.createElement("div");
+        monthDiv.className = "month";
+
+        let html = `<h2>${month}</h2><table><tr>`;
+
+        days.forEach(day => html += `<th>${day}</th>`);
+        html += "</tr><tr>";
+
+        for (let i = 0; i < firstDay; i++) {
+            html += "<td></td>";
+        }
+
+        for (let d = 1; d <= lastDate; d++) {
+
+            if ((firstDay + d - 1) % 7 === 0 && d !== 1) {
+                html += "</tr><tr>";
+            }
+
+            let key = `${index+1}-${d}`;
+
+            if (holidays[key]) {
+               if (holidays[key]) {
+                html += `<td class="holiday" data-title="${holidays[key]}">${d}</td>`;
+              } else {
+                html += `<td>${d}</td>`;
+            }
+            } else {
+                html += `<td>${d}</td>`;
+            }
+        }
+
+        html += "</tr></table>";
+        monthDiv.innerHTML = html;
+        container.appendChild(monthDiv);
+    });
+}
+
+generateCalendar(2026);
+
+</script>
+
+</body>
+</html>
